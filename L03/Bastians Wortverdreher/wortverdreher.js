@@ -2,7 +2,7 @@
 var main;
 (function (main) {
     let sentence;
-    sentence = prompt("Ein Satz:du sagst nichts");
+    sentence = prompt("GIB SATZ!!!! OMNOMNOMNOM:");
     console.log(invertEachWordLetters(sentence));
     console.log(reverseSentenceWords(sentence));
     console.log(reverseWholeString(sentence));
