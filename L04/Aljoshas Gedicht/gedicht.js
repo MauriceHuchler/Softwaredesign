@@ -14,10 +14,11 @@ var Gedicht;
     function GetVerse() {
         let verse2;
         let index = Math.floor(Math.random() * subjects.length);
-        console.log("index " + index);
+        let index2 = Math.floor(Math.random() * subjects.length);
+        let index3 = Math.floor(Math.random() * subjects.length);
         verse2 = subjects.splice(index, 1) + " ";
-        verse2 = verse2 + verbs.splice(index, 1) + " ";
-        verse2 = verse2 + objects.splice(index, 1);
+        verse2 = verse2 + verbs.splice(index2, 1) + " ";
+        verse2 = verse2 + objects.splice(index3, 1);
         return verse2;
     }
 })(Gedicht || (Gedicht = {}));
