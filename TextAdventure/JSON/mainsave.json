@@ -1,0 +1,23 @@
+{
+    "rooms":[
+        {
+            "id":1,
+            "name": "yourtable",
+
+        }
+    ],
+
+    "npcs":[
+        {
+            "id":2,
+            "name": "Thor"
+        }
+    ],
+
+    "items":[
+        {
+            "id":3,
+            "name":"Flammenschlund"
+        }
+    ]
+}
