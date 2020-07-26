@@ -1,23 +1,105 @@
 {
-    "rooms":[
+    "rooms": [
         {
-            "id":1,
             "name": "yourtable",
-
+            "id": 0,
+            "connectedTo": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "desc": " your table. ",
+            "hasSeen": false
+        },
+        {
+            "name": "Bar",
+            "id": 1,
+            "connectedTo": [
+                -1,
+                -1,
+                0,
+                -1
+            ],
+            "desc": " the bar. ",
+            "hasSeen": false
+        },
+        {
+            "name": "Table of Odin",
+            "id": 2,
+            "connectedTo": [
+                -1,
+                -1,
+                -1,
+                0
+            ],
+            "desc": " Odin's table. ",
+            "hasSeen": false
+        },
+        {
+            "name": "Table of Thor",
+            "id": 3,
+            "connectedTo": [
+                0,
+                -1,
+                -1,
+                -1
+            ],
+            "desc": " Thor's table. ",
+            "hasSeen": false
+        },
+        {
+            "name": "Table of Olaf",
+            "id": 4,
+            "connectedTo": [
+                -1,
+                0,
+                -1,
+                -1
+            ],
+            "desc": " Olaf's table",
+            "hasSeen": false
         }
     ],
-
-    "npcs":[
+    "npcs": [
         {
-            "id":2,
-            "name": "Thor"
+            "name": "Thor",
+            "id": 1001,
+            "dialog": ["want hammer? be worthy. Try lifting",""],
+            "likesyou": true,
+            "isTrue": false,
+            "position": 3
+        },
+        {
+            "name": "Dwarf-Lady",
+            "id": 1002,
+            "dialog": [
+                "if you want beer you need to trade in items.",
+                "Cant pay do ya??"
+            ],
+            "likesyou": true,
+            "isTrue": false,
+            "position": 1
         }
     ],
-
-    "items":[
+    "items": [
         {
-            "id":3,
-            "name":"Flammenschlund"
+            "id": 2001,
+            "name": "Flammenschlund",
+            "position": 0,
+            "destination": 1002
+        },
+        {
+            "id": 2002,
+            "name": "Thors-Hammer",
+            "position": 3,
+            "destination": 1002
+        },
+        {
+            "id": 2003,
+            "name": "Beer",
+            "position": 1,
+            "destination": -1
         }
     ]
 }

@@ -5,19 +5,19 @@ namespace TextAdventure {
         public position: number;
         public destination: number;
 
-        constructor(_name: string, _id: number, _position: number, _destination: number) {
-            this.name = _name;
-            this.id = _id;
-            this.position = _position;
-            this.destination = _destination;
-        }
 
-        getName():string{
+
+        getName(): string {
             return this.name;
         }
 
-        observer():void{
-            
+        observer(): boolean {
+            if (this.position == this.destination) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     }
 }

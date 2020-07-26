@@ -1,11 +1,18 @@
 namespace TextAdventure {
     export class Player extends Character {
-        public canDrop: boolean;
-        public canSpeak: boolean;
-        public canTake: boolean;
+        canDrop: boolean;
+        canSpeak: boolean;
+        canTake: boolean;
+        canGive: boolean;
+
+        constructor() {
+            super();
+            this.position = 0;
+
+        }
 
         commands(): string {
-            let output: string;
+            let output: string = "";
 
             output += "walk(w) direction, ";
             output += "inventory(i), ";
@@ -13,11 +20,14 @@ namespace TextAdventure {
             if (this.canTake == true) {
                 output += "take(t) item, ";
             }
-            if (this.canDrop == true){
+            if (this.canDrop == true) {
                 output += "drop(d) item, ";
             }
-            if( this.canSpeak == true){
+            if (this.canSpeak == true) {
                 output += "speak(s), ";
+            }
+            if (this.canGive == true){
+                output += "give(s) person item, ";
             }
             output += "commands(c), ";
             output += "quit(q)";
@@ -25,7 +35,7 @@ namespace TextAdventure {
             return output;
         }
 
-        
+
     }
 }
 

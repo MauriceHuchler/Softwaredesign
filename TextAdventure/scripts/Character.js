@@ -1,24 +1,18 @@
-namespace TextAdventure {
-    export class Character {
-        public name: string;
-        public health: number;
-        public inventory: Item[];
-        public position: number;
-
+"use strict";
+var TextAdventure;
+(function (TextAdventure) {
+    class Character {
         constructor() {
             this.inventory = [];
         }
-
-        getName(): string {
+        getName() {
             return this.name;
         }
-
-        setName(_name: string): void {
+        setName(_name) {
             this.name = _name;
         }
-
-        getInventory(): string {
-            let temp: string = "";
+        getInventory() {
+            let temp = "";
             if (this.inventory.length > 0) {
                 this.inventory.forEach(item => {
                     temp += item.getName() + ", ";
@@ -29,7 +23,8 @@ namespace TextAdventure {
             else {
                 return "you have no items";
             }
-
         }
     }
-}
+    TextAdventure.Character = Character;
+})(TextAdventure || (TextAdventure = {}));
+//# sourceMappingURL=Character.js.map

@@ -1,6 +1,6 @@
 namespace TextAdventure {
     export class Room {
-        public name: string;
+        name: string;
         id: number;
         connectedTo: number[];
         desc: string;
@@ -8,12 +8,7 @@ namespace TextAdventure {
         npcs: Npc[];
         items: Item[];
 
-        constructor(_name: string, _id: number, _connectedTo: number[], _desc: string, _hasSeen: boolean) {
-            this.name = _name;
-            this.id = _id;
-            this.connectedTo = _connectedTo;
-            this.desc = _desc;
-            this.hasSeen = _hasSeen;
+        constructor() {
             this.npcs = [];
             this.items = [];
         }
@@ -32,7 +27,7 @@ namespace TextAdventure {
                 temp += character.getName() + ", ";
             });
 
-            temp.slice(temp.length - 2, temp.length);
+            temp = temp.substring(0, temp.length - 2);
             return temp;
         }
 
@@ -46,8 +41,10 @@ namespace TextAdventure {
                 temp += item.getName() + ", ";
             });
 
-            temp.slice(temp.length - 2, temp.length);
-            return temp;
+            temp = temp.substring(0, temp.length - 2);
+            console.log(temp);
+            console.log(temp.length);
+            return temp + ". ";
         }
 
         setItem(_item: Item): void {
