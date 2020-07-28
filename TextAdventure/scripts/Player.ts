@@ -4,10 +4,11 @@ namespace TextAdventure {
         canSpeak: boolean;
         canTake: boolean;
         canGive: boolean;
-
+        
         constructor() {
             super();
             this.position = 0;
+            
 
         }
 

@@ -1,42 +1,21 @@
 namespace TextAdventure {
     const input: HTMLInputElement = document.getElementById("input") as HTMLInputElement;
     const output: HTMLLIElement = document.getElementById("output") as HTMLLIElement;
-    const points: HTMLLIElement = document.getElementById("points") as HTMLLIElement;
+    const beerboard: HTMLLIElement = document.getElementById("scoreboard") as HTMLLIElement;
 
     let items: Item[] = [];
     let npcs: Npc[] = [];
     let rooms: Room[] = [];
     let player: Player = new Player();
-    console.log(player);
+    let points: number = 0;
 
-
-    function prepare(ini: string): string {
-        return ini.toLowerCase();
-    }
-
-    function getUserInput(): Promise<string> {
-        input.focus();
-        return new Promise(function (resolve: (value: string) => void): void {
-            const keydownEvent: EventListener = (event: Event) => {
-                if ((event as KeyboardEvent).key === "Enter") {
-                    const value: string = input.value;
-                    input.value = "";
-                    input.removeEventListener("keydown", keydownEvent);
-                    resolve(value);
-                }
-            };
-            input.addEventListener("keydown", keydownEvent);
-        });
-    }
-
-
+    main();
 
     async function main(): Promise<void> {
         let menu: string = "start (s), load (l), quit (q)";
         output.innerHTML += menu + "<p>";
 
         let userInput: string = await getUserInput();
-
 
         switch (userInput) {
             case "s":
@@ -56,18 +35,10 @@ namespace TextAdventure {
                 main();
                 break;
         }
-
     }
-
-
-    main();
-
-
 
     async function startGame(): Promise<void> {
         const filename: string = "./JSON/mainsave.json";
-
-
         await load(filename);
 
         while (true) {
@@ -79,18 +50,38 @@ namespace TextAdventure {
     async function load(_filename: string): Promise<void> {
         console.log("start fetch");
         let response: Response = await fetch(_filename);
-
         let text: string = await response.text();
         let json: Object = JSON.parse(text);
 
         console.log("ready for sorting");
         sort(json);
         assign(); // ANSPASSEN AUF KONZEPT!!!!!11111einseinself
-        console.log(rooms);
-        console.log(npcs);
+
     }
 
-
+    function getUserInput(): Promise<string> {
+        input.focus();
+        return new Promise(function (resolve: (value: string) => void): void {
+            const keydownEvent: EventListener = (event: Event) => {
+                if ((event as KeyboardEvent).key === "Enter") {
+                    const value: string = input.value;
+                    input.value = "";
+                    input.removeEventListener("keydown", keydownEvent);
+                    resolve(value);
+                }
+            };
+            input.addEventListener("keydown", keydownEvent);
+        });
+    }
+    function updateBeerBoard(): void {
+        let beer: Item;
+        beer = player.inventory.find(item => item.name.toLowerCase() == "beer");
+        if (player.inventory.includes(beer)) {
+            points += 1;
+            beerboard.innerHTML = "you drunk " + points + " beer";
+            player.inventory = player.inventory.filter(item => item.name.toLowerCase() != "beer");
+        }
+    }
 
     function sort(_element: Object): void {
         for (let key in _element) {
@@ -103,7 +94,6 @@ namespace TextAdventure {
                     room1.connectedTo = room.connectedTo;
                     room1.desc = room.desc;
                     room1.hasSeen = room.hasSeen;
-                    console.dir(room1);
                     sortedArray.push(room1);
                 }
                 rooms = sortedArray;
@@ -132,6 +122,7 @@ namespace TextAdventure {
                     item1.id = item.id;
                     item1.position = item.position;
                     item1.destination = item.destination;
+                    item1.canPickup = item.canPickup;
                     sortedArray.push(item1);
                 }
                 items = sortedArray;
@@ -141,35 +132,43 @@ namespace TextAdventure {
     }
 
     function assign(): void {
+
+        let minRoomId: number = 0;
+        let maxRoomId: number = 1000;
+        let minItemId: number = 1000;
+        let maxItemId: number = 2000;
+
         for (let npc of npcs) {
-            if (npc.position >= 0 && npc.position < 1000) {
+            if (npc.position >= minRoomId && npc.position < maxRoomId) {
                 rooms.find(room => room.id == npc.position).npcs.push(npc);
             }
         }
         for (let item of items) {
-            if (item.position >= 0 && item.position < 1000) {
+            if (item.position >= minRoomId && item.position < maxRoomId) {
                 rooms.find(room => room.id == item.position).items.push(item);
             }
+            if (item.position > minItemId && item.position < maxItemId) {
+                npcs.find(npc => npc.id == item.position).inventory.push(item);
+            }
         }
-
-
+        console.log("everything succesfully assigned");
     }
 
-
-
-    let counter: number = 1;
     async function playerController(): Promise<void> {
         let answerMenu: string[];
+        let currentRoom: Room;
+        currentRoom = rooms.find(room => room.id == player.position);
 
+        updateBeerBoard();
         setBool();
 
-        if (counter > 0) {
+        if (currentRoom.hasSeen == false) {
             output.innerHTML = look();
-            counter -= 1;
+            currentRoom.hasSeen = true;
         }
 
         output.innerHTML += "<p>" + player.commands();
-        answerMenu = (await prepare(await getUserInput())).split(" ");
+        answerMenu = (await getUserInput()).toLowerCase().split(" ");
         switch (answerMenu[0].toLowerCase()) {
             case "w":
             case "walk": {
@@ -213,7 +212,8 @@ namespace TextAdventure {
                 break;
             }
 
-            case "q": {
+            case "q":
+            case "quit": {
                 quit();
                 break;
             }
@@ -252,7 +252,6 @@ namespace TextAdventure {
         return wholeRoom;
     }
 
-
     function setBool(): void {
         let playerRoom: Room;
         playerRoom = rooms.find(room => room.id == player.position);
@@ -282,13 +281,12 @@ namespace TextAdventure {
     }
     // UPDATEN AUF KONZPET !!!!!!!!!!
     function walk(_direction: string): string {
-        let direction: string = _direction;
         let playerRoom: Room;
         playerRoom = rooms.find(room => room.id == player.position);
 
 
 
-        switch (direction) {
+        switch (_direction) {
 
             case "n":
             case "north":
@@ -338,7 +336,6 @@ namespace TextAdventure {
         console.log(_answer);
         let playerRoom: Room;
         let npcRoom: Npc;
-        let output: string = "";
 
         playerRoom = rooms.find(room => room.id == player.position);
 
@@ -351,51 +348,54 @@ namespace TextAdventure {
         }
 
     }
-
     // anpassen auf Konzept
     function take(_answer: string): string {
         let playerRoom: Room;
         let itemInRoom: Item;
-
-        let event: string = "nothing happens";
+        let event: string;
 
         playerRoom = rooms.find(room => room.id == player.position);
         itemInRoom = playerRoom.items.find(item => item.name.toLowerCase() == _answer);
 
         if (itemInRoom != undefined) {
-            itemInRoom.position = -1;
 
-            if (itemInRoom.observer() == true) {
-                event = takeEvent(itemInRoom);
+            if (itemInRoom.canPickup == true) {
+                itemInRoom.position = -1;
+
+
+                event = getTakeEvent(itemInRoom);
+
+
+                console.log(itemInRoom);
+                player.inventory.push(itemInRoom);
+                playerRoom.items = playerRoom.items.filter(item => item.name.toLowerCase() != _answer);
+                itemInRoom.position = -1;
+                return "you took: " + _answer + ", " + event;
             }
-
-            console.log(itemInRoom);
-            player.inventory.push(itemInRoom);
-            playerRoom.items = playerRoom.items.filter(item => item.name.toLowerCase() != _answer);
-            itemInRoom.position = -1;
-            return "you took: " + _answer + ", " + event;
+            else {
+                return "you cant take this item right now.";
+            }
         }
-
         else {
             return "there is no such item";
         }
 
-
-
     }
 
-    function takeEvent(_item: Item): string {
+    function getTakeEvent(_item: Item): string {
+        let specificnpc: Npc;
         switch (_item.name.toLowerCase()) {
-            case "flammenschlund":
 
             case "beer":
-                let specificnpc: Npc = npcs.find(npc => npc.name == "Dwarf-Lady");
+                specificnpc = npcs.find(npc => npc.name == "Dwarf-Lady");
                 specificnpc.likesyou = false;
-                return "Dwarf-Lady doenst like you anymore";
-
-
-            case "thors-hammer":
-                points.setAttribute("points", "1");
+                return "Dwarf-Lady doesn't like you anymore";
+            case "odins-eye":
+                specificnpc = npcs.find(npc => npc.name == "Odin");
+                specificnpc.likesyou = false;
+                return "Odin doesn't like you anymore";
+            default:
+                return "nothing happens.";
         }
     }
     // ANPASSEN AUF KONZEPT
@@ -425,33 +425,112 @@ namespace TextAdventure {
         let playerRoom: Room;
         let npcInRoom: Npc;
         let itemInInv: Item;
+        let output: string;
 
         playerRoom = rooms.find(room => room.id == player.position);
         npcInRoom = playerRoom.npcs.find(npc => npc.name.toLowerCase() == _answer);
         itemInInv = player.inventory.find(item => item.name.toLowerCase() == _item);
-        console.log(itemInInv);
-
-        if (itemInInv.id != undefined) {
-
-            itemInInv.position = npcInRoom.id;
-            if (itemInInv.observer() == true) {
-                npcInRoom.inventory.push(itemInInv);
-                player.inventory = player.inventory.filter(item => item.name.toLowerCase() != _item);
-                npcInRoom.likesyou = true;
-                return "Thank you my friend, take this!";
-            }
-
-            else {
-                itemInInv.position = -1;
-                return "i have no need for it.";
-            }
+        if (npcInRoom == undefined) {
+            output = "there is no one with this name: " + _answer;
+            return output;
         }
+        if (itemInInv == undefined) {
+            output = "you dont have the item: " + _item;
+            return output;
+        }
+
+
+        itemInInv.position = npcInRoom.id;
+        if (itemInInv.observerDestination() == true) {
+            output = getGiveEvent(npcInRoom, itemInInv);
+
+
+        }
+        else {
+            itemInInv.position = -1;
+            output = "i have no need for it.";
+
+        }
+        return output;
+
+    }
+    // AUF KONZEPT AKTUALISIEREN
+    function getGiveEvent(_npc: Npc, _item: Item): string {
+        let output: string;
+        switch (_item.name.toLowerCase()) {
+
+            case "flammenschlund":
+            case "thors-hammer":
+                _npc.inventory.push(_item);
+                player.inventory = player.inventory.filter(item => item != _item);
+                _npc.likesyou = true;
+                output = "Thank you my friend, take this beer!";
+                player.inventory.push(items.find(item => item.name.toLowerCase() == "beer"));
+                return output;
+            case "odins-eye":
+                _npc.inventory.push(_item);
+                player.inventory = player.inventory.filter(item => item != _item);
+                _npc.likesyou = true;
+                output = "Well done brother, you can have this i found it at some place.";
+                player.inventory.push(_npc.inventory.find(item => item.name.toLowerCase() == "zeus-trident"));
+                _npc.inventory.filter(item => item.name.toLowerCase() == "zeus-trident");
+                player.inventory = player.inventory.filter(item => item.name.toLowerCase() != "odins-eye");
+                return output;
+            case "zeus-trident":
+                _npc.inventory.push(_item);
+                player.inventory = player.inventory.filter(item => item != _item);
+                _npc.likesyou = true;
+                items.find(item => item.name.toLowerCase() == "thors-hammer").canPickup = true;
+                output = "Oh this looks way better than my hammer, you are worthy! Try lifting it";
+                return output;
+
+            default:
+                output = "this does not do anything";
+                return output;
+
+        }
+
 
 
     }
 
+    function saveGame(): void {
+        let json: string = "{ \"rooms\": [";
+
+        for (let room of rooms) {
+            json += "{ \"name\": \"" + room.name + "\", ";
+            json += "\"id\":" + room.id + ", ";
+            json += "\"connectedTo\": [";
+            for (let num of room.connectedTo) {
+                json += num + ",";
+            }
+            json = json.substring(0, json.length - 1);
+            json += "],";
+            json += "\"desc\": \"" + room.desc + "\",";
+            json += "\"hasSeen\":" + room.hasSeen;
+            json += "},";
+
+        }
+        json = json.substring(0, json.length - 2);
+        json += "}]}";
+
+        let jsonObject: Object = JSON.parse(json);
+        let data: string = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonObject));
+        let hiddenElement: HTMLAnchorElement = document.createElement("a");
+        document.body.appendChild(hiddenElement);
+        hiddenElement.href = "data:" + data;
+        hiddenElement.download = "SaveJson.json";
+        hiddenElement.click();
+        document.body.removeChild(hiddenElement);
+    }
+
     function quit(): void {
-        console.log("quit");
+        saveGame();
+        let hiddenElement: HTMLAnchorElement = document.createElement("a");
+        document.body.appendChild(hiddenElement);
+        document.addEventListener()
+        hiddenElement.click();
+        window.close();
     }
 }
 

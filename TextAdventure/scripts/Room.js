@@ -29,8 +29,6 @@ var TextAdventure;
                 temp += item.getName() + ", ";
             });
             temp = temp.substring(0, temp.length - 2);
-            console.log(temp);
-            console.log(temp.length);
             return temp + ". ";
         }
         setItem(_item) {

@@ -1,21 +1,30 @@
 namespace TextAdventure {
     export class Item {
-        public name: string;
-        public id: number;
-        public position: number;
-        public destination: number;
+        name: string;
+        id: number;
+        position: number;
+        destination: number;
+        canPickup: boolean;
 
-
-
+      
         getName(): string {
             return this.name;
         }
 
-        observer(): boolean {
+        observerDestination(): boolean {
             if (this.position == this.destination) {
                 return true;
             }
             else {
+                return false;
+            }
+        }
+
+        observerPickup(): boolean {
+            if ( this.canPickup == true){
+                return true;
+            }
+            else{
                 return false;
             }
         }

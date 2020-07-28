@@ -65,9 +65,12 @@
         {
             "name": "Thor",
             "id": 1001,
-            "dialog": ["want hammer? be worthy. Try lifting",""],
-            "likesyou": true,
-            "isTrue": false,
+            "dialog": [
+                "Haha , nice weapon you brouth me!",
+                "want hammer? be worthy. bring me a god-weapon."
+            ],
+            "likesyou": false,
+            "isTrue": true,
             "position": 3
         },
         {
@@ -80,6 +83,28 @@
             "likesyou": true,
             "isTrue": false,
             "position": 1
+        },
+        {
+            "name": "Odin",
+            "id": 1003,
+            "dialog": [
+                "Can you bring this letter to the lady at the bar?",
+                "who are you??"
+            ],
+            "likesyou": true,
+            "isTrue": true,
+            "position": 2
+        },
+        {
+            "name": "Olaf",
+            "id": 1004,
+            "dialog": [
+                "You did a good job!",
+                "if you want pass the test, bring me odins-eye"
+            ],
+            "likesyou": false,
+            "isTrue": false,
+            "position": 4
         }
     ],
     "items": [
@@ -87,19 +112,37 @@
             "id": 2001,
             "name": "Flammenschlund",
             "position": 0,
-            "destination": 1002
+            "destination": 1002,
+            "canPickup": true
         },
         {
             "id": 2002,
             "name": "Thors-Hammer",
             "position": 3,
-            "destination": 1002
+            "destination": 1002,
+            "canPickup": false
         },
         {
             "id": 2003,
             "name": "Beer",
             "position": 1,
-            "destination": -1
+            "destination": -1,
+            "canPickup": true
+        },
+        {
+            "id": 2004,
+            "name": "Odins-Eye",
+            "position": 2,
+            "destination": 1004,
+            "canPickup": true
+        },
+        {
+            "id": 2005,
+            "name": "Zeus-trident",
+            "position": 1004,
+            "destination": 1001,
+            "canPickup": true
         }
+     
     ]
 }

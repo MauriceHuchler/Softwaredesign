@@ -5,8 +5,16 @@ var TextAdventure;
         getName() {
             return this.name;
         }
-        observer() {
+        observerDestination() {
             if (this.position == this.destination) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        observerPickup() {
+            if (this.canPickup == true) {
                 return true;
             }
             else {
