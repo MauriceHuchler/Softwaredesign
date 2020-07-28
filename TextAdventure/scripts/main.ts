@@ -528,7 +528,6 @@ namespace TextAdventure {
         saveGame();
         let hiddenElement: HTMLAnchorElement = document.createElement("a");
         document.body.appendChild(hiddenElement);
-        document.addEventListener()
         hiddenElement.click();
         window.close();
     }

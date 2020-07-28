@@ -440,7 +440,6 @@ var TextAdventure;
         saveGame();
         let hiddenElement = document.createElement("a");
         document.body.appendChild(hiddenElement);
-        document.addEventListener();
         hiddenElement.click();
         window.close();
     }
