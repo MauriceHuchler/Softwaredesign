@@ -13,16 +13,18 @@ var TextAdventure;
         }
         getInventory() {
             let temp = "";
+            let output = "";
             if (this.inventory.length > 0) {
                 this.inventory.forEach(item => {
                     temp += item.getName() + ", ";
                 });
                 temp.slice(temp.length - 2, temp.length);
-                return "you have: " + temp;
+                output = "you have: " + temp;
             }
             else {
-                return "you have no items";
+                output = "you have no items";
             }
+            return output;
         }
     }
     TextAdventure.Character = Character;

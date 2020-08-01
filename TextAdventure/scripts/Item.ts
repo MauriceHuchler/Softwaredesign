@@ -6,7 +6,7 @@ namespace TextAdventure {
         destination: number;
         canPickup: boolean;
 
-      
+        
         getName(): string {
             return this.name;
         }
@@ -21,10 +21,10 @@ namespace TextAdventure {
         }
 
         observerPickup(): boolean {
-            if ( this.canPickup == true){
+            if (this.canPickup == true) {
                 return true;
             }
-            else{
+            else {
                 return false;
             }
         }

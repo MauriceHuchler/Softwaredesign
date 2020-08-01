@@ -20,9 +20,10 @@ var TextAdventure;
             temp = temp.substring(0, temp.length - 2);
             return temp;
         }
-        setNPC(_npc) {
-            this.npcs.push(_npc);
-        }
+        /*
+                setNPC(_npc: Npc): void {
+                    this.npcs.push(_npc);
+                }*/
         getItem() {
             let temp = "";
             this.items.forEach(item => {

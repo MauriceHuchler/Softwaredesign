@@ -143,6 +143,10 @@
             "destination": 1001,
             "canPickup": true
         }
-     
-    ]
+    ],
+    "player": [{
+        "name": "dwarf",
+        "position": 0,
+        "points": 0
+    }]
 }

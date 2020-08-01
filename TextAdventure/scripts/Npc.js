@@ -2,6 +2,9 @@
 var TextAdventure;
 (function (TextAdventure) {
     class Npc extends TextAdventure.Character {
+        constructor() {
+            super();
+        }
         getDialog() {
             if (this.likesyou == true) {
                 return this.dialog[0];
@@ -9,9 +12,6 @@ var TextAdventure;
             else {
                 return this.dialog[1];
             }
-        }
-        observer(_id) {
-            return null;
         }
     }
     TextAdventure.Npc = Npc;

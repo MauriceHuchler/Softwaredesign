@@ -8,7 +8,11 @@ var TextAdventure;
     let npcs = [];
     let rooms = [];
     let player = new TextAdventure.Player();
-    let points = 0;
+    let minRoomId = 0;
+    let maxRoomId = 1000;
+    let minItemId = 1000;
+    let maxItemId = 2000;
+    let isRunning = true;
     main();
     async function main() {
         let menu = "start (s), load (l), quit (q)";
@@ -35,7 +39,7 @@ var TextAdventure;
     async function startGame() {
         const filename = "./JSON/mainsave.json";
         await load(filename);
-        while (true) {
+        while (isRunning == true) {
             await playerController();
         }
     }
@@ -66,8 +70,8 @@ var TextAdventure;
         let beer;
         beer = player.inventory.find(item => item.name.toLowerCase() == "beer");
         if (player.inventory.includes(beer)) {
-            points += 1;
-            beerboard.innerHTML = "you drunk " + points + " beer";
+            player.points += 1;
+            beerboard.innerHTML = "you drunk " + player.points + " beer";
             player.inventory = player.inventory.filter(item => item.name.toLowerCase() != "beer");
         }
     }
@@ -94,7 +98,6 @@ var TextAdventure;
                     npc1.id = npc.id;
                     npc1.dialog = npc.dialog;
                     npc1.likesyou = npc.likesyou;
-                    npc1.isTrue = npc.isTrue;
                     npc1.position = npc.position;
                     sortedArray.push(npc1);
                 }
@@ -113,13 +116,16 @@ var TextAdventure;
                 }
                 items = sortedArray;
             }
+            if (key == "player") {
+                for (let oldPlayer of _element.player) {
+                    player.position = oldPlayer.position;
+                    player.points = oldPlayer.points;
+                    player.name = oldPlayer.name;
+                }
+            }
         }
     }
     function assign() {
-        let minRoomId = 0;
-        let maxRoomId = 1000;
-        let minItemId = 1000;
-        let maxItemId = 2000;
         for (let npc of npcs) {
             if (npc.position >= minRoomId && npc.position < maxRoomId) {
                 rooms.find(room => room.id == npc.position).npcs.push(npc);
@@ -147,6 +153,7 @@ var TextAdventure;
         }
         output.innerHTML += "<p>" + player.commands();
         answerMenu = (await getUserInput()).toLowerCase().split(" ");
+        changePicture("");
         switch (answerMenu[0].toLowerCase()) {
             case "w":
             case "walk": {
@@ -201,7 +208,6 @@ var TextAdventure;
         let wholeRoom = "";
         let playerRoom;
         playerRoom = rooms.find(room => room.id == player.position);
-        //!!!!!! AUF DOKUMENT AKTUALISIEREN!!!!!!!!!
         wholeRoom += "You are at" + playerRoom.getDesc();
         if (playerRoom.npcs.length > 0) {
             wholeRoom += " There is " + playerRoom.getNPC();
@@ -241,57 +247,56 @@ var TextAdventure;
             player.canGive = false;
         }
     }
-    // UPDATEN AUF KONZPET !!!!!!!!!!
     function walk(_direction) {
         let playerRoom;
         playerRoom = rooms.find(room => room.id == player.position);
         switch (_direction) {
             case "n":
             case "north":
-                if (playerRoom.connectedTo[0] >= 0 && playerRoom.connectedTo[0] < 1000) {
+                if (playerRoom.connectedTo[0] >= minRoomId && playerRoom.connectedTo[0] < maxRoomId) {
                     player.position = rooms.find(room => room.id == rooms.find(room => room.id == player.position).connectedTo[0]).id;
                     return "you walked north";
                 }
                 else
-                    return "you cant walk this way";
+                    return "you cant walk north";
             case "e":
             case "east":
-                if (playerRoom.connectedTo[1] >= 0 && playerRoom.connectedTo[1] < 1000) {
+                if (playerRoom.connectedTo[1] >= minRoomId && playerRoom.connectedTo[1] < maxRoomId) {
                     player.position = rooms.find(room => room.id == rooms.find(room => room.id == player.position).connectedTo[1]).id;
                     return "you walked east";
                 }
                 else
-                    return "you cant walk this way";
+                    return "you cant walk east";
             case "s":
             case "south":
-                if (playerRoom.connectedTo[2] >= 0 && playerRoom.connectedTo[2] < 1000) {
+                if (playerRoom.connectedTo[2] >= minRoomId && playerRoom.connectedTo[2] < maxRoomId) {
                     player.position = rooms.find(room => room.id == rooms.find(room => room.id == player.position).connectedTo[2]).id;
                     return "you walked south";
                 }
                 else
-                    return "you cant walk this way";
+                    return "you cant walk south";
             case "w":
             case "west":
-                if (playerRoom.connectedTo[3] >= 0 && playerRoom.connectedTo[3] < 1000) {
+                if (playerRoom.connectedTo[3] >= minRoomId && playerRoom.connectedTo[3] < maxRoomId) {
                     player.position = rooms.find(room => room.id == rooms.find(room => room.id == player.position).connectedTo[3]).id;
                     return "you walked west";
                 }
                 else
-                    return "you cant walk this way";
+                    return "you cant walk this west";
             default:
                 return "you cant walk this way";
         }
     }
     function speak(_answer) {
-        console.log(_answer);
         let playerRoom;
         let npcRoom;
         playerRoom = rooms.find(room => room.id == player.position);
         if (playerRoom.npcs.find(npc => npc.name.toLowerCase() == _answer) == undefined) {
-            return "there is no one with this name.";
+            return "there is no one with this name: " + _answer;
         }
         else {
             npcRoom = playerRoom.npcs.find(npc => npc.name.toLowerCase() == _answer);
+            changePicture(_answer);
             return npcRoom.name + " says: " + npcRoom.getDialog();
         }
     }
@@ -306,7 +311,6 @@ var TextAdventure;
             if (itemInRoom.canPickup == true) {
                 itemInRoom.position = -1;
                 event = getTakeEvent(itemInRoom);
-                console.log(itemInRoom);
                 player.inventory.push(itemInRoom);
                 playerRoom.items = playerRoom.items.filter(item => item.name.toLowerCase() != _answer);
                 itemInRoom.position = -1;
@@ -342,7 +346,7 @@ var TextAdventure;
         playerRoom = rooms.find(room => room.id == player.position);
         itemInInv = player.inventory.find(item => item.name.toLowerCase() == _answer);
         if (itemInInv == undefined) {
-            return "there is no such item";
+            return "you dont have " + _answer + "in your inventory";
         }
         else {
             playerRoom.items.push(itemInInv);
@@ -438,10 +442,25 @@ var TextAdventure;
     }
     function quit() {
         saveGame();
-        let hiddenElement = document.createElement("a");
-        document.body.appendChild(hiddenElement);
-        hiddenElement.click();
+        isRunning = false;
         window.close();
+    }
+    function changePicture(_npc) {
+        let frame = document.getElementById("characters");
+        switch (_npc.toLowerCase()) {
+            case "olaf":
+                frame.style.backgroundImage = "url('../pics/olaf.png')";
+                break;
+            case "thor":
+                frame.style.backgroundImage = "url('../pics/thor.png')";
+                break;
+            case "odin":
+                frame.style.backgroundImage = "url('../pics/odin.png')";
+                break;
+            default:
+                frame.style.backgroundImage = "none";
+                break;
+        }
     }
 })(TextAdventure || (TextAdventure = {}));
 //# sourceMappingURL=main.js.map

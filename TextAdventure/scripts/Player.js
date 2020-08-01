@@ -4,7 +4,6 @@ var TextAdventure;
     class Player extends TextAdventure.Character {
         constructor() {
             super();
-            this.position = 0;
         }
         commands() {
             let output = "";

@@ -7,7 +7,14 @@ namespace TextAdventure {
     let npcs: Npc[] = [];
     let rooms: Room[] = [];
     let player: Player = new Player();
-    let points: number = 0;
+
+    let minRoomId: number = 0;
+    let maxRoomId: number = 1000;
+    let minItemId: number = 1000;
+    let maxItemId: number = 2000;
+
+    let isRunning: boolean = true;
+
 
     main();
 
@@ -41,7 +48,7 @@ namespace TextAdventure {
         const filename: string = "./JSON/mainsave.json";
         await load(filename);
 
-        while (true) {
+        while (isRunning == true) {
 
             await playerController();
         }
@@ -77,8 +84,8 @@ namespace TextAdventure {
         let beer: Item;
         beer = player.inventory.find(item => item.name.toLowerCase() == "beer");
         if (player.inventory.includes(beer)) {
-            points += 1;
-            beerboard.innerHTML = "you drunk " + points + " beer";
+            player.points += 1;
+            beerboard.innerHTML = "you drunk " + player.points + " beer";
             player.inventory = player.inventory.filter(item => item.name.toLowerCase() != "beer");
         }
     }
@@ -107,7 +114,6 @@ namespace TextAdventure {
                     npc1.id = npc.id;
                     npc1.dialog = npc.dialog;
                     npc1.likesyou = npc.likesyou;
-                    npc1.isTrue = npc.isTrue;
                     npc1.position = npc.position;
                     sortedArray.push(npc1);
                 }
@@ -127,16 +133,22 @@ namespace TextAdventure {
                 }
                 items = sortedArray;
             }
+
+            if (key == "player") {
+                for (let oldPlayer of _element.player) {
+                    player.position = oldPlayer.position;
+                    player.points = oldPlayer.points;
+                    player.name = oldPlayer.name;
+                }
+
+            }
         }
 
     }
 
     function assign(): void {
 
-        let minRoomId: number = 0;
-        let maxRoomId: number = 1000;
-        let minItemId: number = 1000;
-        let maxItemId: number = 2000;
+
 
         for (let npc of npcs) {
             if (npc.position >= minRoomId && npc.position < maxRoomId) {
@@ -159,6 +171,7 @@ namespace TextAdventure {
         let currentRoom: Room;
         currentRoom = rooms.find(room => room.id == player.position);
 
+
         updateBeerBoard();
         setBool();
 
@@ -169,6 +182,7 @@ namespace TextAdventure {
 
         output.innerHTML += "<p>" + player.commands();
         answerMenu = (await getUserInput()).toLowerCase().split(" ");
+        changePicture("");
         switch (answerMenu[0].toLowerCase()) {
             case "w":
             case "walk": {
@@ -226,7 +240,9 @@ namespace TextAdventure {
                 output.innerHTML = "there is no such command";
                 break;
 
+
         }
+
     }
 
     function look(): string {
@@ -234,7 +250,6 @@ namespace TextAdventure {
         let playerRoom: Room;
         playerRoom = rooms.find(room => room.id == player.position);
 
-        //!!!!!! AUF DOKUMENT AKTUALISIEREN!!!!!!!!!
         wholeRoom += "You are at" + playerRoom.getDesc();
         if (playerRoom.npcs.length > 0) {
             wholeRoom += " There is " + playerRoom.getNPC();
@@ -279,7 +294,7 @@ namespace TextAdventure {
 
 
     }
-    // UPDATEN AUF KONZPET !!!!!!!!!!
+
     function walk(_direction: string): string {
         let playerRoom: Room;
         playerRoom = rooms.find(room => room.id == player.position);
@@ -290,40 +305,40 @@ namespace TextAdventure {
 
             case "n":
             case "north":
-                if (playerRoom.connectedTo[0] >= 0 && playerRoom.connectedTo[0] < 1000) {
+                if (playerRoom.connectedTo[0] >= minRoomId && playerRoom.connectedTo[0] < maxRoomId) {
                     player.position = rooms.find(room => room.id == rooms.find(room => room.id == player.position).connectedTo[0]).id;
                     return "you walked north";
                 }
-                else return "you cant walk this way";
+                else return "you cant walk north";
 
             case "e":
             case "east":
-                if (playerRoom.connectedTo[1] >= 0 && playerRoom.connectedTo[1] < 1000) {
+                if (playerRoom.connectedTo[1] >= minRoomId && playerRoom.connectedTo[1] < maxRoomId) {
                     player.position = rooms.find(room => room.id == rooms.find(room => room.id == player.position).connectedTo[1]).id;
                     return "you walked east";
                 }
-                else return "you cant walk this way";
+                else return "you cant walk east";
 
 
 
             case "s":
             case "south":
-                if (playerRoom.connectedTo[2] >= 0 && playerRoom.connectedTo[2] < 1000) {
+                if (playerRoom.connectedTo[2] >= minRoomId && playerRoom.connectedTo[2] < maxRoomId) {
                     player.position = rooms.find(room => room.id == rooms.find(room => room.id == player.position).connectedTo[2]).id;
                     return "you walked south";
                 }
-                else return "you cant walk this way";
+                else return "you cant walk south";
 
 
 
 
             case "w":
             case "west":
-                if (playerRoom.connectedTo[3] >= 0 && playerRoom.connectedTo[3] < 1000) {
+                if (playerRoom.connectedTo[3] >= minRoomId && playerRoom.connectedTo[3] < maxRoomId) {
                     player.position = rooms.find(room => room.id == rooms.find(room => room.id == player.position).connectedTo[3]).id;
                     return "you walked west";
                 }
-                else return "you cant walk this way";
+                else return "you cant walk this west";
             default:
                 return "you cant walk this way";
 
@@ -332,18 +347,17 @@ namespace TextAdventure {
     }
 
     function speak(_answer: string): string {
-
-        console.log(_answer);
         let playerRoom: Room;
         let npcRoom: Npc;
 
         playerRoom = rooms.find(room => room.id == player.position);
 
         if (playerRoom.npcs.find(npc => npc.name.toLowerCase() == _answer) == undefined) {
-            return "there is no one with this name.";
+            return "there is no one with this name: " + _answer;
         }
         else {
             npcRoom = playerRoom.npcs.find(npc => npc.name.toLowerCase() == _answer);
+            changePicture(_answer);
             return npcRoom.name + " says: " + npcRoom.getDialog();
         }
 
@@ -364,9 +378,6 @@ namespace TextAdventure {
 
 
                 event = getTakeEvent(itemInRoom);
-
-
-                console.log(itemInRoom);
                 player.inventory.push(itemInRoom);
                 playerRoom.items = playerRoom.items.filter(item => item.name.toLowerCase() != _answer);
                 itemInRoom.position = -1;
@@ -408,7 +419,7 @@ namespace TextAdventure {
         playerRoom = rooms.find(room => room.id == player.position);
         itemInInv = player.inventory.find(item => item.name.toLowerCase() == _answer);
         if (itemInInv == undefined) {
-            return "there is no such item";
+            return "you dont have " + _answer + "in your inventory";
         }
         else {
             playerRoom.items.push(itemInInv);
@@ -526,10 +537,29 @@ namespace TextAdventure {
 
     function quit(): void {
         saveGame();
-        let hiddenElement: HTMLAnchorElement = document.createElement("a");
-        document.body.appendChild(hiddenElement);
-        hiddenElement.click();
+        isRunning = false;
         window.close();
     }
+
+    function changePicture(_npc: string): void {
+        let frame: HTMLElement = document.getElementById("characters");
+
+        switch (_npc.toLowerCase()) {
+            case "olaf":
+                frame.style.backgroundImage = "url('../pics/olaf.png')";
+                break;
+            case "thor":
+                frame.style.backgroundImage = "url('../pics/thor.png')";
+                break;
+            case "odin":
+                frame.style.backgroundImage = "url('../pics/odin.png')";
+                break;
+            default:
+                frame.style.backgroundImage = "none";
+                break;
+        }
+    }
+
 }
+
 

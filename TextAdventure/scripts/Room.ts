@@ -30,10 +30,10 @@ namespace TextAdventure {
             temp = temp.substring(0, temp.length - 2);
             return temp;
         }
-
-        setNPC(_npc: Npc): void {
-            this.npcs.push(_npc);
-        }
+        /*
+                setNPC(_npc: Npc): void {
+                    this.npcs.push(_npc);
+                }*/
 
         getItem(): string {
             let temp: string = "";

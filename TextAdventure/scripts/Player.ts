@@ -4,12 +4,11 @@ namespace TextAdventure {
         canSpeak: boolean;
         canTake: boolean;
         canGive: boolean;
-        
+        points: number;
+
         constructor() {
             super();
-            this.position = 0;
             
-
         }
 
         commands(): string {
@@ -27,7 +26,7 @@ namespace TextAdventure {
             if (this.canSpeak == true) {
                 output += "speak(s), ";
             }
-            if (this.canGive == true){
+            if (this.canGive == true) {
                 output += "give(s) person item, ";
             }
             output += "commands(c), ";
