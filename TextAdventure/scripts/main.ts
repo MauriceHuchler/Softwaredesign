@@ -148,8 +148,6 @@ namespace TextAdventure {
 
     function assign(): void {
 
-
-
         for (let npc of npcs) {
             if (npc.position >= minRoomId && npc.position < maxRoomId) {
                 rooms.find(room => room.id == npc.position).npcs.push(npc);
@@ -171,7 +169,6 @@ namespace TextAdventure {
         let currentRoom: Room;
         currentRoom = rooms.find(room => room.id == player.position);
 
-
         updateBeerBoard();
         setBool();
 
@@ -179,7 +176,6 @@ namespace TextAdventure {
             output.innerHTML = look();
             currentRoom.hasSeen = true;
         }
-
         output.innerHTML += "<p>" + player.commands();
         answerMenu = (await getUserInput()).toLowerCase().split(" ");
         changePicture("");
@@ -239,7 +235,6 @@ namespace TextAdventure {
             default:
                 output.innerHTML = "there is no such command";
                 break;
-
 
         }
 
