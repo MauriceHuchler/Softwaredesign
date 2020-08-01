@@ -195,7 +195,8 @@ var TextAdventure;
                 quit();
                 break;
             }
-            case "c": {
+            case "c":
+            case "commands": {
                 output.innerHTML = player.commands();
                 break;
             }
