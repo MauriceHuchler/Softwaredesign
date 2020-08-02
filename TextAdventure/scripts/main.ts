@@ -22,7 +22,7 @@ namespace TextAdventure {
         let menu: string = "start (s), load (l), quit (q)";
         output.innerHTML += menu + "<p>";
 
-        let userInput: string = await (await getUserInput()).toLowerCase();
+        let userInput: string = (await getUserInput()).toLowerCase();
 
         switch (userInput) {
             case "s":
