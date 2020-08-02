@@ -24,7 +24,7 @@ namespace TextAdventure {
 
         let userInput: string = await getUserInput();
 
-        switch (userInput) {
+        switch (userInput.toLowerCase()) {
             case "s":
             case "start":
                 startGame();
