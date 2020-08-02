@@ -500,7 +500,7 @@ namespace TextAdventure {
 
 
     }
-
+    // WIP
     function saveGame(): void {
         let json: string = "{ \"rooms\": [";
 
