@@ -62,7 +62,7 @@ namespace TextAdventure {
 
         console.log("ready for sorting");
         sort(json);
-        assign(); // ANSPASSEN AUF KONZEPT!!!!!11111einseinself
+        assign();
 
     }
 
@@ -358,7 +358,7 @@ namespace TextAdventure {
         }
 
     }
-    // anpassen auf Konzept
+    
     function take(_answer: string): string {
         let playerRoom: Room;
         let itemInRoom: Item;
@@ -405,7 +405,7 @@ namespace TextAdventure {
                 return "nothing happens.";
         }
     }
-    // ANPASSEN AUF KONZEPT
+   
     function drop(_answer: string): string {
         let playerRoom: Room;
         let itemInInv: Item;
@@ -461,7 +461,7 @@ namespace TextAdventure {
         return output;
 
     }
-    // AUF KONZEPT AKTUALISIEREN
+    
     function getGiveEvent(_npc: Npc, _item: Item): string {
         let output: string;
         switch (_item.name.toLowerCase()) {

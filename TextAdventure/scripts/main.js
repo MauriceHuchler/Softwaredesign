@@ -18,7 +18,7 @@ var TextAdventure;
         let menu = "start (s), load (l), quit (q)";
         output.innerHTML += menu + "<p>";
         let userInput = await getUserInput();
-        switch (userInput) {
+        switch (userInput.toLowerCase()) {
             case "s":
             case "start":
                 startGame();
@@ -50,7 +50,7 @@ var TextAdventure;
         let json = JSON.parse(text);
         console.log("ready for sorting");
         sort(json);
-        assign(); // ANSPASSEN AUF KONZEPT!!!!!11111einseinself
+        assign();
     }
     function getUserInput() {
         input.focus();
@@ -301,7 +301,6 @@ var TextAdventure;
             return npcRoom.name + " says: " + npcRoom.getDialog();
         }
     }
-    // anpassen auf Konzept
     function take(_answer) {
         let playerRoom;
         let itemInRoom;
@@ -340,7 +339,6 @@ var TextAdventure;
                 return "nothing happens.";
         }
     }
-    // ANPASSEN AUF KONZEPT
     function drop(_answer) {
         let playerRoom;
         let itemInInv;
@@ -382,7 +380,6 @@ var TextAdventure;
         }
         return output;
     }
-    // AUF KONZEPT AKTUALISIEREN
     function getGiveEvent(_npc, _item) {
         let output;
         switch (_item.name.toLowerCase()) {
